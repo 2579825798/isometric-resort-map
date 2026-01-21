@@ -23,68 +23,48 @@ const elLink = document.getElementById("sheetLink");
 const elMeta = document.getElementById("sheetMeta");
 
 async function loadJSON(url) {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`Failed to load ${url}`);
-  return res.json();
+  const r = await fetch(url, { cache: "no-store" });
+  if (!r.ok) throw new Error(`Failed to load ${url}`);
+  return r.json();
 }
 
-// Полигоны невидимы, но кликабельны
-function styleFeature(feature) {
-  const t = feature.properties?.type;
+// ===== ТРАНСФОРМАЦИЯ КООРДИНАТ (QGIS -> картинка) =====
+function getGeoJSONBounds(gj) {
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
 
-  if (t === "zone" || t === "cabin" || t === "service") {
-    return {
-      color: "transparent",
-      fillColor: "transparent",
-      weight: 0,
-      fillOpacity: 0.001
-    };
+  function visit(coords) {
+    if (typeof coords[0] === "number") {
+      const x = coords[0];
+      const y = coords[1];
+      minX = Math.min(minX, x);
+      minY = Math.min(minY, y);
+      maxX = Math.max(maxX, x);
+      maxY = Math.max(maxY, y);
+      return;
+    }
+    coords.forEach(visit);
   }
 
-  return {};
-}
-
-// POI — видимые
-function pointToLayer(feature, latlng) {
-  const marker = L.circleMarker(latlng, {
-    radius: 6,
-
-    stroke: true,
-    color: "#444444",      // обводка — чёрная
-    weight: 1,
-
-    fill: true,
-    fillColor: "#ffffff",  // 🔥 БЕЛАЯ ТОЧКА
-    fillOpacity: 1
+  (gj.features || []).forEach(f => {
+    if (f?.geometry?.coordinates) visit(f.geometry.coordinates);
   });
 
-  const label = feature.properties?.label;
-  if (label) {
-    marker.bindTooltip(label, {
-      permanent: true,
-      direction: "top",
-      offset: [0, -6],
-      className: "poi-label"
-    });
-  }
-
-  return marker;
+  return { minX, minY, maxX, maxY };
 }
 
+function transformGeoJSON(gj) {
+  const cloned = JSON.parse(JSON.stringify(gj));
+  const b = getGeoJSONBounds(cloned);
 
-
-/**
- * Перевод координат QGIS (без CRS) -> Leaflet CRS.Simple
- * y_leaflet = IMAGE_HEIGHT + y_qgis
- */
-function qgisToLeafletCoord(c) {
-  return [c[0], IMAGE_HEIGHT + c[1]];
-}
-
-function transformGeoJSON(geojson) {
-  const cloned = structuredClone(geojson);
-
-  const tr = (coord) => qgisToLeafletCoord(coord);
+  // 1) x -> [0..W]
+  // 2) y -> [0..H] с инверсией оси (в QGIS вверх = больше, в картинке вниз = больше)
+  const tr = ([x, y]) => {
+    const nx = (x - b.minX) / (b.maxX - b.minX);
+    const ny = (y - b.minY) / (b.maxY - b.minY);
+    const px = nx * IMAGE_WIDTH;
+    const py = (1 - ny) * IMAGE_HEIGHT;
+    return [px, py];
+  };
 
   const trGeom = (geom) => {
     if (!geom) return geom;
@@ -129,6 +109,7 @@ function transformGeoJSON(geojson) {
   return cloned;
 }
 
+// ===== UI: карточка =====
 function openSheetByFeature(feature) {
   const props = feature.properties || {};
   const id = props.id || "";
@@ -164,21 +145,83 @@ function closeSheet() {
   elSheet.classList.add("hidden");
 }
 
-async function init() {
-  map = L.map("map", {
-    crs: L.CRS.Simple,
-    minZoom: -2,
-    maxZoom: 2,
-    zoomControl: true
+function closeMiniAppOrSheet() {
+  // 1) если карточка открыта — закрываем её
+  if (!elSheet.classList.contains("hidden")) {
+    closeSheet();
+    return;
+  }
+  // 2) если карточки нет — закрываем мини-апп (только внутри Telegram)
+  const tg = window.Telegram?.WebApp;
+  if (tg) tg.close();
+}
+
+// ===== СТИЛИ =====
+function styleFeature(feature) {
+  const t = feature.properties?.type;
+
+  // Невидимые hit-area (но кликабельные!)
+  if (t === "zone" || t === "cabin" || t === "service") {
+    return {
+      color: "transparent",
+      fillColor: "#000",
+      weight: 0,
+      fillOpacity: 0.001
+    };
+  }
+
+  return {};
+}
+
+// POI — видимые
+function pointToLayer(feature, latlng) {
+  const marker = L.circleMarker(latlng, {
+    radius: 6,
+
+    stroke: true,
+    color: "#444444",      // обводка
+    weight: 1,
+
+    fill: true,
+    fillColor: "#ffffff",  // заливка
+    fillOpacity: 1
   });
 
-  // Подложка
-  const bounds = [[0, 0], [IMAGE_HEIGHT, IMAGE_WIDTH]];
-  L.imageOverlay("./assets/base.png", bounds).addTo(map);
-  map.fitBounds(bounds);
+  const label = feature.properties?.label;
+  if (label) {
+    marker.bindTooltip(label, {
+      permanent: true,
+      direction: "top",
+      offset: [0, -6],
+      className: "poi-label"
+    });
+  }
 
-  // UI
-  elSheetClose.addEventListener("click", closeSheet);
+  return marker;
+}
+
+async function init() {
+  // Telegram WebApp (если открыто внутри Telegram Mini App)
+  const tg = window.Telegram?.WebApp;
+  if (tg) {
+    tg.ready();
+    tg.expand(); // раскрыть на максимум по высоте
+    tg.BackButton.show();
+    tg.BackButton.onClick(closeMiniAppOrSheet);
+  }
+
+  map = L.map("map", {
+    crs: L.CRS.Simple,
+    zoomControl: true,
+    minZoom: -3,
+    maxZoom: 3
+  });
+
+  const imageBounds = [[0, 0], [IMAGE_HEIGHT, IMAGE_WIDTH]];
+  L.imageOverlay("./assets/base.png", imageBounds).addTo(map);
+  map.fitBounds(imageBounds);
+
+  elSheetClose.addEventListener("click", closeMiniAppOrSheet);
 
   // Каталог
   try {
@@ -199,19 +242,12 @@ async function init() {
       pointToLayer,
       onEachFeature: (feature, layer) => {
         layer.on("click", () => {
-          console.log(
-            "CLICK",
-            feature?.properties?.id,
-            feature?.properties?.label,
-            feature?.properties?.type
-          );
           openSheetByFeature(feature);
         });
       }
     }).addTo(map);
   });
 }
-
 
 init().catch(err => {
   console.error(err);
