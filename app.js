@@ -1,3 +1,5 @@
+console.log("APP VERSION: 20260122-1");
+
 const IMAGE_WIDTH = 1536;
 const IMAGE_HEIGHT = 1024;
 
