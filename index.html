@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Isometric Resort Map</title>
+
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="map"></div>
+
+  <!-- Bottom sheet -->
+  <div id="sheet" class="sheet hidden" role="dialog" aria-modal="true">
+    <div class="sheet__handle"></div>
+    <button id="sheetClose" class="sheet__close" aria-label="Закрыть">✕</button>
+
+    <div class="sheet__content">
+      <div id="sheetTitle" class="sheet__title">Объект</div>
+      <div id="sheetSubtitle" class="sheet__subtitle"></div>
+
+      <div id="sheetDesc" class="sheet__desc">
+        Описание…
+      </div>
+
+      <a id="sheetLink" class="sheet__btn hidden" href="#" target="_blank" rel="noopener">
+        Подробнее
+      </a>
+
+      <div id="sheetMeta" class="sheet__meta"></div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

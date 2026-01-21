@@ -1,0 +1,272 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+  background: #000;
+}
+
+/* Bottom sheet */
+.sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 10px 14px 16px;
+  background: rgba(20, 20, 20, 0.94);
+  color: #fff;
+  border-top-left-radius: 18px;
+  border-top-right-radius: 18px;
+  box-shadow: 0 -10px 30px rgba(0,0,0,0.35);
+  backdrop-filter: blur(10px);
+  z-index: 9999;
+}
+
+.sheet.hidden {
+  display: none;
+}
+
+.sheet__handle {
+  width: 44px;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.28);
+  margin: 4px auto 10px;
+}
+
+.sheet__close {
+  position: absolute;
+  right: 10px;
+  top: 8px;
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,0.85);
+  font-size: 18px;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+.sheet__content {
+  padding-top: 6px;
+}
+
+.sheet__title {
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.sheet__subtitle {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-top: 4px;
+}
+
+.sheet__desc {
+  margin-top: 10px;
+  font-size: 14px;
+  line-height: 1.35;
+  opacity: 0.95;
+}
+
+.sheet__btn {
+  display: block;
+  margin-top: 12px;
+  text-align: center;
+  text-decoration: none;
+  background: #ffffff;
+  color: #111;
+  padding: 12px 14px;
+  border-radius: 14px;
+  font-weight: 800;
+}
+
+.sheet__meta {
+  margin-top: 10px;
+  font-size: 12px;
+  opacity: 0.55;
+}
+
+.sheet__btn.hidden {
+  display: none;
+}
+
+.poi-label {
+  background: #ffffff !important;   /* чисто белый фон */
+  color: #000000 !important;        /* чёрный текст */
+
+  border: none !important;
+  border-radius: 6px;
+  padding: 2px 6px;
+
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  line-height: 1.2;
+
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+  text-shadow: none !important;
+}
+
+/* Убираем стрелку tooltip полностью */
+.leaflet-tooltip:before,
+.leaflet-tooltip:after,
+.leaflet-tooltip-top:before,
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+  display: none !important;
+  content: none !important;
+  border: none !important;
+}
+
+
+
+/* --- Bottom sheet: product-like --- */
+.sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 10px 14px 16px;
+  background: rgba(20, 20, 20, 0.94);
+  color: #fff;
+  border-top-left-radius: 18px;
+  border-top-right-radius: 18px;
+  box-shadow: 0 -10px 30px rgba(0,0,0,0.35);
+  backdrop-filter: blur(10px);
+  z-index: 999999;
+}
+
+.sheet.hidden { display: none; }
+
+.sheet__handle {
+  width: 44px;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.28);
+  margin: 4px auto 10px;
+}
+
+.sheet__close {
+  position: absolute;
+  right: 10px;
+  top: 8px;
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,0.85);
+  font-size: 18px;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+.sheet__title {
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.sheet__subtitle {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-top: 4px;
+}
+
+.sheet__desc {
+  margin-top: 10px;
+  font-size: 14px;
+  line-height: 1.35;
+  opacity: 0.95;
+}
+
+.sheet__btn {
+  display: block;
+  margin-top: 12px;
+  text-align: center;
+  text-decoration: none;
+  background: #ffffff;
+  color: #111;
+  padding: 12px 14px;
+  border-radius: 14px;
+  font-weight: 800;
+}
+
+.sheet__btn.hidden { display: none; }
+
+.sheet__meta {
+  margin-top: 10px;
+  font-size: 12px;
+  opacity: 0.55;
+}
+
+.poi-label {
+  background: rgba(40, 40, 40, 0.85) !important; /* серый, полупрозрачный */
+  color: #fff !important;
+
+  border: none !important;
+  border-radius: 8px;
+  padding: 2px 6px;
+
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  line-height: 1.2;
+
+  box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+  text-shadow: none !important;
+}
+
+/* 🔥 УБИРАЕМ СТРЕЛКУ ПОЛНОСТЬЮ */
+.poi-label::before,
+.poi-label::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* Убираем "стрелку" у tooltip во всех направлениях */
+.leaflet-tooltip:before,
+.leaflet-tooltip:after,
+.leaflet-tooltip-top:before,
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+  display: none !important;
+  content: none !important;
+  border: none !important;
+}
+
+/* На всякий: у некоторых тем стрелка делается через border */
+.leaflet-tooltip-top,
+.leaflet-tooltip-bottom,
+.leaflet-tooltip-left,
+.leaflet-tooltip-right {
+  border: none !important;
+}
+
+/* ===== POI TOOLTIP: ПРИНУДИТЕЛЬНО ===== */
+.leaflet-tooltip.poi-label {
+  background-color: #ffffff !important; /* БЕЛЫЙ ФОН */
+  color: #000000 !important;            /* ЧЁРНЫЙ ТЕКСТ */
+
+  border: none !important;
+  border-radius: 6px !important;
+  padding: 2px 6px !important;
+
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25) !important;
+  text-shadow: none !important;
+}
+
+/* убираем стрелку */
+.leaflet-tooltip.poi-label::before,
+.leaflet-tooltip.poi-label::after {
+  display: none !important;
+  content: none !important;
+}

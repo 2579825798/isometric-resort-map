@@ -1,0 +1,20 @@
+{
+"type": "FeatureCollection",
+"name": "poi_new",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "id": "cabin-01", "type": "poi", "label": "Домик 1" }, "geometry": { "type": "Point", "coordinates": [ 417.679866936132726, -469.463882817950207 ] } },
+{ "type": "Feature", "properties": { "id": "cabin-02", "type": "poi", "label": "Домик 2" }, "geometry": { "type": "Point", "coordinates": [ 451.514831971097806, -337.883463237530577 ] } },
+{ "type": "Feature", "properties": { "id": "cabin-03", "type": "poi", "label": "Домик 3" }, "geometry": { "type": "Point", "coordinates": [ 783.598748055014539, -250.163183517250616 ] } },
+{ "type": "Feature", "properties": { "id": "cabin-04", "type": "poi", "label": "Домик 4" }, "geometry": { "type": "Point", "coordinates": [ 938.988957845224377, -230.112833866900928 ] } },
+{ "type": "Feature", "properties": { "id": "cabin-05", "type": "poi", "label": "Домик 5" }, "geometry": { "type": "Point", "coordinates": [ 1187.112034768301328, -377.984162538229668 ] } },
+{ "type": "Feature", "properties": { "id": "restaurant", "type": "poi", "label": "Ресторан" }, "geometry": { "type": "Point", "coordinates": [ 1046.759587215853799, -310.314232468299565 ] } },
+{ "type": "Feature", "properties": { "id": "admin", "type": "poi", "label": "Администрация" }, "geometry": { "type": "Point", "coordinates": [ 1253.528817985084743, -211.3156310696981 ] } },
+{ "type": "Feature", "properties": { "id": "bath", "type": "poi", "label": "Баня" }, "geometry": { "type": "Point", "coordinates": [ 1006.032314488578436, -614.828917782985968 ] } },
+{ "type": "Feature", "properties": { "id": "zone-beach", "type": "poi", "label": "Пляж" }, "geometry": { "type": "Point", "coordinates": [ 948.543886394933452, -669.081760592348019 ] } },
+{ "type": "Feature", "properties": { "id": "zone-river", "type": "poi", "label": "Река" }, "geometry": { "type": "Point", "coordinates": [ 1026.679538568845828, -853.401760592346363 ] } },
+{ "type": "Feature", "properties": { "id": "zone-lake", "type": "poi", "label": "Озеро" }, "geometry": { "type": "Point", "coordinates": [ 730.164755960152434, -388.594804070610621 ] } },
+{ "type": "Feature", "properties": { "id": "zone-forest", "type": "poi", "label": "Лес" }, "geometry": { "type": "Point", "coordinates": [ 319.451712481894447, -128.142630157568988 ] } },
+{ "type": "Feature", "properties": { "id": "zone-parking", "type": "poi", "label": "Парковка" }, "geometry": { "type": "Point", "coordinates": [ 1341.225625525365558, -270.389586679307229 ] } }
+]
+}
