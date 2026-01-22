@@ -23,6 +23,13 @@ const elSubtitle = document.getElementById("sheetSubtitle");
 const elDesc = document.getElementById("sheetDesc");
 const elLink = document.getElementById("sheetLink");
 const elMeta = document.getElementById("sheetMeta");
+const elPhoto = document.getElementById("sheetPhoto");
+const elChips = document.getElementById("sheetChips");
+const elBtnDetails = document.getElementById("sheetBtnDetails");
+const elBtnCall = document.getElementById("sheetBtnCall");
+const elDim = document.getElementById("mapDim");
+elDim.classList.remove("hidden");
+
 
 async function loadJSON(url) {
   const r = await fetch(url, { cache: "no-store" });
@@ -108,37 +115,96 @@ function transformGeoJSON(gj, bounds) {
 function openSheetByFeature(feature) {
   const props = feature.properties || {};
   const id = props.id || "";
-  const label = props.label || id || "Объект";
-  const baseType = props.type || "";
+  const label = props.label || "Объект";
 
   const item = (id && catalogById[id]) ? catalogById[id] : null;
 
-  elTitle.textContent = label;
+  // Заголовок
+  elTitle.textContent = item?.title || label;
 
-  // маленькая строка под заголовком
-  const hint = baseType ? `Тип: ${baseType}` : "";
-  elSubtitle.textContent = hint;
+  // Subtitle (если есть) — иначе пусто
+  elSubtitle.textContent = item?.subtitle || "";
 
-  elDesc.textContent = item?.desc || "Краткая информация появится здесь (catalog.json).";
+  // Описание
+  elDesc.textContent = item?.desc || "Описание появится здесь (catalog.json).";
 
-  // Кнопка "Подробнее" — только если есть url
-  const url = item?.url || "";
-  if (url) {
-    elLink.href = url;
-    elLink.classList.remove("hidden");
+  // Фото
+  const photo = item?.photo || "";
+  if (photo) {
+    elPhoto.src = photo;
+    elPhoto.alt = item?.title || label;
+    elPhoto.classList.remove("hidden");
   } else {
-    elLink.classList.add("hidden");
-    elLink.href = "#";
+    elPhoto.classList.add("hidden");
+    elPhoto.removeAttribute("src");
   }
 
-  elMeta.textContent = id ? `ID: ${id}` : "";
+  // Chips
+  elChips.innerHTML = "";
+  const chips = Array.isArray(item?.chips) ? item.chips : [];
+  chips.slice(0, 6).forEach(text => {
+    const div = document.createElement("div");
+    div.className = "chip";
+    div.textContent = text;
+    elChips.appendChild(div);
+  });
+
+  // Кнопка "Подробнее"
+  const details = item?.actions?.details || item?.url || "";
+  if (details) {
+    elBtnDetails.href = details;
+    elBtnDetails.classList.remove("hidden");
+  } else {
+    elBtnDetails.classList.add("hidden");
+    elBtnDetails.href = "#";
+  }
+
+  // Кнопка "Позвонить"
+  const phone = item?.actions?.phone || "";
+  if (phone) {
+    elBtnCall.href = `tel:${phone.replace(/\s+/g, "")}`;
+    elBtnCall.classList.remove("hidden");
+    elBtnCall.classList.add("secondary");
+  } else {
+    elBtnCall.classList.add("hidden");
+    elBtnCall.href = "#";
+  }
+
+  // Убираем тех.мету полностью
+  elMeta.textContent = "";
+
+  // 👉 Центрируем карту на объекте (чуть выше центра, чтобы не перекрывалось карточкой)
+  try {
+    const geom = feature.geometry;
+    let latlng = null;
+
+    if (geom.type === "Point") {
+      latlng = geom.coordinates.slice().reverse(); // [y, x]
+    } else if (geom.type === "Polygon") {
+      const ring = geom.coordinates[0];
+      const mid = ring[Math.floor(ring.length / 2)];
+      latlng = mid.slice().reverse();
+    }
+
+    if (latlng) {
+      map.panTo(
+        [latlng[0] - IMAGE_HEIGHT * 0.15 / IMAGE_HEIGHT, latlng[1]],
+        { animate: true, duration: 0.4 }
+      );
+    }
+  } catch (e) {
+    console.warn("center failed", e);
+  }
 
   elSheet.classList.remove("hidden");
 }
 
+
 function closeSheet() {
   elSheet.classList.add("hidden");
+  elDim.classList.add("hidden");
 }
+
 
 function closeMiniAppOrSheet() {
   // 1) если карточка открыта — закрываем её
@@ -216,6 +282,21 @@ async function init() {
   L.imageOverlay("./assets/base.png", imageBounds).addTo(map);
   map.fitBounds(imageBounds);
 
+  let suppressNextMapClick = false;
+
+
+  map.on("click", () => {
+    if (suppressNextMapClick) {
+      suppressNextMapClick = false;
+      return;
+    }
+    if (!elSheet.classList.contains("hidden")) {
+     closeSheet();
+    }
+  });
+
+
+
   elSheetClose.addEventListener("click", closeMiniAppOrSheet);
 
   // Каталог
@@ -247,8 +328,16 @@ async function init() {
       style: styleFeature,
       pointToLayer,
       onEachFeature: (feature, layer) => {
-        layer.on("click", () => openSheetByFeature(feature));
+        layer.on("click", (e) => {
+          suppressNextMapClick = true;
+          if (e?.originalEvent) {
+            e.originalEvent.stopPropagation?.();
+            e.originalEvent.preventDefault?.();
+          }
+          openSheetByFeature(feature);
+        });
       }
+
     }).addTo(map);
   });
 } // <-- ВОТ ЭТОЙ СКОБКИ НЕ ХВАТАЛО (закрываем init)
@@ -258,3 +347,23 @@ init().catch(err => {
   alert("Ошибка загрузки, смотри консоль (F12).");
 });
 
+// ⬇️ Свайп вниз по карточке — закрытие
+let startY = null;
+
+elSheet.addEventListener("touchstart", e => {
+  startY = e.touches[0].clientY;
+});
+
+elSheet.addEventListener("touchmove", e => {
+  if (startY === null) return;
+  const dy = e.touches[0].clientY - startY;
+
+  if (dy > 80) { // порог
+    closeSheet();
+    startY = null;
+  }
+});
+
+elSheet.addEventListener("touchend", () => {
+  startY = null;
+});
