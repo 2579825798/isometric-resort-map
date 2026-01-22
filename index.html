@@ -10,10 +10,10 @@
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
   />
   <link rel="stylesheet" href="styles.css?v=20260122-1" />
-
 </head>
 <body>
   <div id="map"></div>
+  <div id="mapDim" class="map-dim hidden"></div>
 
   <!-- Bottom sheet -->
   <div id="sheet" class="sheet hidden" role="dialog" aria-modal="true">
@@ -21,16 +21,28 @@
     <button id="sheetClose" class="sheet__close" aria-label="Закрыть">✕</button>
 
     <div class="sheet__content">
+      <!-- ✅ Фото (появится только если есть item.photo в catalog.json) -->
+      <img id="sheetPhoto" class="sheet__photo hidden" alt="" />
+
       <div id="sheetTitle" class="sheet__title">Объект</div>
       <div id="sheetSubtitle" class="sheet__subtitle"></div>
+
+      <!-- ✅ Чипсы (chips[] из catalog.json) -->
+      <div id="sheetChips" class="sheet__chips"></div>
 
       <div id="sheetDesc" class="sheet__desc">
         Описание…
       </div>
 
-      <a id="sheetLink" class="sheet__btn hidden" href="#" target="_blank" rel="noopener">
-        Подробнее
-      </a>
+      <!-- ✅ Кнопки действий -->
+      <div class="sheet__actions">
+        <a id="sheetBtnDetails" class="sheet__btn hidden" href="#" target="_blank" rel="noopener">
+          Подробнее
+        </a>
+        <a id="sheetBtnCall" class="sheet__btn hidden secondary" href="#" rel="noopener">
+          Позвонить
+        </a>
+      </div>
 
       <div id="sheetMeta" class="sheet__meta"></div>
     </div>
@@ -42,6 +54,5 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
   <script src="app.js?v=20260122-1"></script>
-
 </body>
 </html>
