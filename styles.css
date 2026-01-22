@@ -18,15 +18,21 @@ html, body {
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 10px 14px 16px;
-  background: rgba(20, 20, 20, 0.94);
-  color: #fff;
-  border-top-left-radius: 18px;
-  border-top-right-radius: 18px;
-  box-shadow: 0 -10px 30px rgba(0,0,0,0.35);
-  backdrop-filter: blur(10px);
-  z-index: 9999;
+
+  max-height: 85vh;
+  background: #fff;
+  border-radius: 16px 16px 0 0;
+
+  transform: translateY(100%);
+  transition: transform 0.28s ease-out;
+
+  z-index: 1000;
 }
+
+.sheet:not(.hidden) {
+  transform: translateY(0);
+}
+
 
 .sheet.hidden {
   display: none;
@@ -123,24 +129,6 @@ html, body {
   display: none !important;
   content: none !important;
   border: none !important;
-}
-
-
-
-/* --- Bottom sheet: product-like --- */
-.sheet {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 10px 14px 16px;
-  background: rgba(20, 20, 20, 0.94);
-  color: #fff;
-  border-top-left-radius: 18px;
-  border-top-right-radius: 18px;
-  box-shadow: 0 -10px 30px rgba(0,0,0,0.35);
-  backdrop-filter: blur(10px);
-  z-index: 999999;
 }
 
 .sheet.hidden { display: none; }
@@ -269,4 +257,64 @@ html, body {
 .leaflet-tooltip.poi-label::after {
   display: none !important;
   content: none !important;
+}
+
+.sheet__photo{
+  width:100%;
+  height:160px;
+  object-fit:cover;
+  border-radius:12px;
+  margin-bottom:10px;
+}
+
+.sheet__chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin:6px 0 10px;
+}
+
+.chip{
+  font-size:12px;
+  padding:4px 8px;
+  border-radius:999px;
+  background:rgba(0,0,0,0.06);
+  color:#111;
+}
+
+.sheet__actions{
+  display:flex;
+  gap:10px;
+  margin-top:12px;
+}
+
+.sheet__btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:10px 12px;
+  border-radius:12px;
+  font-weight:700;
+  text-decoration:none;
+  background:#111;
+  color:#fff;
+  flex:1;
+}
+
+.sheet__btn.secondary{
+  background:rgba(0,0,0,0.08);
+  color:#111;
+}
+
+.map-dim {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  z-index: 900;
+}
+
+.map-dim:not(.hidden) {
+  opacity: 1;
 }
