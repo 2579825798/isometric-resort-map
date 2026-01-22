@@ -54,17 +54,17 @@ function getGeoJSONBounds(gj) {
   return { minX, minY, maxX, maxY };
 }
 
-function transformGeoJSON(gj) {
+function transformGeoJSON(gj, bounds) {
   const cloned = JSON.parse(JSON.stringify(gj));
-  const b = getGeoJSONBounds(cloned);
+  const b = bounds; // <-- общий bbox для всех слоёв
 
-  // 1) x -> [0..W]
-  // 2) y -> [0..H] с инверсией оси (в QGIS вверх = больше, в картинке вниз = больше)
   const tr = ([x, y]) => {
     const nx = (x - b.minX) / (b.maxX - b.minX);
     const ny = (y - b.minY) / (b.maxY - b.minY);
+
     const px = nx * IMAGE_WIDTH;
-    const py = (1 - ny) * IMAGE_HEIGHT;
+    const py = ny * IMAGE_HEIGHT; // <-- без инверсии, как ты уже сделал
+
     return [px, py];
   };
 
@@ -75,30 +75,22 @@ function transformGeoJSON(gj) {
       case "Point":
         geom.coordinates = tr(geom.coordinates);
         break;
-
       case "MultiPoint":
         geom.coordinates = geom.coordinates.map(tr);
         break;
-
       case "LineString":
         geom.coordinates = geom.coordinates.map(tr);
         break;
-
       case "MultiLineString":
         geom.coordinates = geom.coordinates.map(line => line.map(tr));
         break;
-
       case "Polygon":
         geom.coordinates = geom.coordinates.map(ring => ring.map(tr));
         break;
-
       case "MultiPolygon":
         geom.coordinates = geom.coordinates.map(poly =>
           poly.map(ring => ring.map(tr))
         );
-        break;
-
-      default:
         break;
     }
     return geom;
@@ -110,6 +102,7 @@ function transformGeoJSON(gj) {
 
   return cloned;
 }
+
 
 // ===== UI: карточка =====
 function openSheetByFeature(feature) {
@@ -236,22 +229,32 @@ async function init() {
   // Слои
   const geojsons = await Promise.all(GEOJSON_URLS.map(loadJSON));
 
+  // 1) общий bbox по всем слоям
+  let global = { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity };
   geojsons.forEach(gj => {
-    const fixed = transformGeoJSON(gj);
+    const b = getGeoJSONBounds(gj);
+    global.minX = Math.min(global.minX, b.minX);
+    global.minY = Math.min(global.minY, b.minY);
+    global.maxX = Math.max(global.maxX, b.maxX);
+    global.maxY = Math.max(global.maxY, b.maxY);
+  });
+
+  // 2) трансформируем каждый слой по одному bbox
+  geojsons.forEach(gj => {
+    const fixed = transformGeoJSON(gj, global);
 
     L.geoJSON(fixed, {
       style: styleFeature,
       pointToLayer,
       onEachFeature: (feature, layer) => {
-        layer.on("click", () => {
-          openSheetByFeature(feature);
-        });
+        layer.on("click", () => openSheetByFeature(feature));
       }
     }).addTo(map);
   });
-}
+} // <-- ВОТ ЭТОЙ СКОБКИ НЕ ХВАТАЛО (закрываем init)
 
 init().catch(err => {
   console.error(err);
   alert("Ошибка загрузки, смотри консоль (F12).");
 });
+
