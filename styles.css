@@ -313,8 +313,11 @@ html, body {
   opacity: 0;
   transition: opacity 0.25s ease;
   z-index: 900;
+
+  pointer-events: none; /* ✅ ВАЖНО: не блокирует карту */
 }
 
 .map-dim:not(.hidden) {
   opacity: 1;
+  pointer-events: auto; /* ✅ блокирует карту ТОЛЬКО когда показан */
 }
