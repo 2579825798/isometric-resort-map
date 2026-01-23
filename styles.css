@@ -211,3 +211,49 @@ html, body {
   .sheet__title{ font-size: 16px; }
   .sheet__desc{ font-size: 13px; }
 }
+
+/* === Bottom sheet (dark) === */
+.sheet {
+  background: rgba(22, 22, 22, 0.92);
+  color: #fff;
+  border-top-left-radius: 18px;
+  border-top-right-radius: 18px;
+  box-shadow: 0 -10px 30px rgba(0,0,0,0.45);
+  backdrop-filter: blur(10px);
+}
+
+.sheet__title { color: #fff; }
+.sheet__subtitle { color: rgba(255,255,255,0.75); }
+.sheet__desc { color: rgba(255,255,255,0.85); }
+
+.sheet__btn {
+  background: #fff;
+  color: #111;
+  border: 0;
+}
+
+.sheet__meta { color: rgba(255,255,255,0.6); }
+.sheet__close { color: rgba(255,255,255,0.9); }
+
+/* ===== FORCE DARK SHEET (override everything) ===== */
+#sheet.sheet {
+  background: rgba(22, 22, 22, 0.92) !important;
+  color: #fff !important;
+  border-top-left-radius: 18px !important;
+  border-top-right-radius: 18px !important;
+  box-shadow: 0 -10px 30px rgba(0,0,0,0.45) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+#sheet .sheet__title { color: #fff !important; }
+#sheet .sheet__subtitle { color: rgba(255,255,255,0.75) !important; }
+#sheet .sheet__desc { color: rgba(255,255,255,0.85) !important; }
+#sheet .sheet__meta { color: rgba(255,255,255,0.6) !important; }
+
+#sheet .sheet__btn {
+  background: #fff !important;
+  color: #111 !important;
+  border: 0 !important;
+}
+
+#sheet .sheet__close { color: rgba(255,255,255,0.9) !important; }
