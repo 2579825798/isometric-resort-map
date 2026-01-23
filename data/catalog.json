@@ -1,15 +1,88 @@
 {
-  "cabin-01": { "desc": "Домик на 2–4 места. Тихая зона.", "url": "" },
-  "cabin-02": { "desc": "Домик рядом с пляжем. Удобный заход.", "url": "" },
-  "cabin-03": { "desc": "Домик с видом на воду.", "url": "" },
-  "cabin-04": { "desc": "Домик в тени деревьев.", "url": "" },
-  "restaurant": { "desc": "Завтраки и ужины. Можно навынос.", "url": "" },
-  "admin": { "desc": "Заезд/выезд, вопросы, документы.", "url": "" },
-  "bath": { "desc": "Баня по записи. Вечером особенно хорошо.", "url": "" },
+  "cabin-01": {
+    "title": "Домик 1",
+    "subtitle": "Гостевой дом",
+    "desc": "Уютный домик для спокойного отдыха на природе.",
+    "photo": "./assets/photos/cabin-01.jpg"
+  },
+  "cabin-02": {
+    "title": "Домик 2",
+    "subtitle": "Гостевой дом",
+    "desc": "Домик с удобным расположением недалеко от воды.",
+    "photo": "./assets/photos/cabin-02.jpg"
+  },
+  "cabin-03": {
+    "title": "Домик 3",
+    "subtitle": "Гостевой дом",
+    "desc": "Домик с видом на воду.",
+    "photo": "./assets/photos/cabin-03.jpg"
+  },
+  "cabin-04": {
+    "title": "Домик 4",
+    "subtitle": "Гостевой дом",
+    "desc": "Просторный домик для семьи или компании.",
+    "photo": "./assets/photos/cabin-04.jpg"
+  },
+  "cabin-05": {
+    "title": "Домик 5",
+    "subtitle": "Гостевой дом",
+    "desc": "Домик в тихой части базы, рядом с лесом.",
+    "photo": "./assets/photos/cabin-05.jpg"
+  },
 
-  "zone-beach": { "desc": "Пляжная зона. Купание до 22:00.", "url": "" },
-  "zone-river": { "desc": "Река. Берег местами скользкий.", "url": "" },
-  "zone-lake": { "desc": "Озеро. Рыбалка по правилам базы.", "url": "" },
-  "zone-forest": { "desc": "Лесная зона. Клещи — проверяйся.", "url": "" },
-  "zone-parking": { "desc": "Парковка. Оставляй проезд свободным.", "url": "" }
+  "restaurant": {
+    "title": "Ресторан",
+    "subtitle": "Кафе у воды",
+    "desc": "Завтраки, обеды и ужины с видом на реку.",
+    "photo": "./assets/photos/restaurant.jpg"
+  },
+
+  "bath": {
+    "title": "Баня",
+    "subtitle": "Русская баня на дровах",
+    "desc": "Горячая баня для отдыха после прогулок и купания.",
+    "photo": "./assets/photos/bath.jpg"
+  },
+
+  "admin": {
+    "title": "Администрация",
+    "subtitle": "Ресепшн",
+    "desc": "Заселение, выезд и любые вопросы по проживанию.",
+    "photo": "./assets/photos/admin.jpg"
+  },
+
+  "zone-parking": {
+    "title": "Парковка",
+    "subtitle": "Для гостей базы",
+    "desc": "Удобная парковка рядом со входом.",
+    "photo": "./assets/photos/zone-parking.jpg"
+  },
+
+  "zone-beach": {
+    "title": "Пляж",
+    "subtitle": "Купание и отдых",
+    "desc": "Песчаный пляж с удобным заходом в воду.",
+    "photo": "./assets/photos/zone-beach.jpg"
+  },
+
+  "zone-river": {
+    "title": "Река",
+    "subtitle": "Купание и лодки",
+    "desc": "Чистая река, причал и лодки для гостей.",
+    "photo": "./assets/photos/zone-river.jpg"
+  },
+
+  "zone-lake": {
+    "title": "Озеро",
+    "subtitle": "Прогулки и рыбалка",
+    "desc": "Небольшое озеро в центре базы.",
+    "photo": "./assets/photos/zone-lake.jpg"
+  },
+
+  "zone-forest": {
+    "title": "Лес",
+    "subtitle": "Природа вокруг",
+    "desc": "Прогулки по лесу и свежий воздух.",
+    "photo": "./assets/photos/zone-forest.jpg"
+  }
 }
