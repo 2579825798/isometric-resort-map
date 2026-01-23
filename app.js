@@ -299,6 +299,12 @@ async function init() {
 
   elSheetClose.addEventListener("click", closeMiniAppOrSheet);
 
+  // клик по затемнению — закрываем карточку
+  if (elDim) {
+    elDim.addEventListener("click", closeSheet);
+  }
+
+
   // Каталог
   try {
     catalogById = await loadJSON(CATALOG_URL);
