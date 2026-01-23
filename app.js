@@ -131,14 +131,17 @@ function openSheetByFeature(feature) {
 
   // Фото
   const photo = item?.photo || "";
-  if (photo) {
-    elPhoto.src = photo;
-    elPhoto.alt = item?.title || label;
-    elPhoto.classList.remove("hidden");
-  } else {
-    elPhoto.classList.add("hidden");
-    elPhoto.removeAttribute("src");
+  if (elPhoto) {
+    if (photo) {
+      elPhoto.src = photo;
+      elPhoto.alt = item?.title || label;
+      elPhoto.classList.remove("hidden");
+    } else {
+      elPhoto.classList.add("hidden");
+      elPhoto.removeAttribute("src");
+    }
   }
+
 
   // Chips
   elChips.innerHTML = "";
@@ -332,13 +335,37 @@ async function init() {
   }
 
 
-  // Каталог
+  // Каталог (универсально: поддерживает и объект-словарь, и массив)
   try {
-    catalogById = await loadJSON(CATALOG_URL);
+    const catalog = await loadJSON(CATALOG_URL);
+
+    if (Array.isArray(catalog)) {
+      // формат: [{ id, title, photo, ... }, ...]
+      catalogById = {};
+      catalog.forEach(it => {
+        if (it?.id) catalogById[it.id] = it;
+      });
+    } else if (catalog && typeof catalog === "object") {
+      // формат: { "cabin-01": {...}, "admin": {...} }
+      // или формат: { items: [...] }
+      if (Array.isArray(catalog.items)) {
+        catalogById = {};
+        catalog.items.forEach(it => {
+          if (it?.id) catalogById[it.id] = it;
+        });
+      } else {
+        catalogById = catalog;
+      }
+    } else {
+      catalogById = {};
+    }
+
+    console.log("CATALOG loaded keys:", Object.keys(catalogById).slice(0, 10));
   } catch (e) {
     console.warn("catalog.json not loaded:", e);
     catalogById = {};
   }
+
 
   // Слои
   const geojsons = await Promise.all(GEOJSON_URLS.map(loadJSON));
