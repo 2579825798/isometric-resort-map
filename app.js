@@ -11,6 +11,7 @@ const GEOJSON_URLS = [
 ];
 
 const CATALOG_URL = "./data/catalog.json";
+let poiCenterById = {}; // id -> [lat, lng] (в CRS.Simple это [y, x])
 
 let map;
 let catalogById = {};
@@ -28,7 +29,7 @@ const elChips = document.getElementById("sheetChips");
 const elBtnDetails = document.getElementById("sheetBtnDetails");
 const elBtnCall = document.getElementById("sheetBtnCall");
 const elDim = document.getElementById("mapDim");
-elDim.classList.remove("hidden");
+
 
 
 async function loadJSON(url) {
@@ -174,27 +175,43 @@ function openSheetByFeature(feature) {
   elMeta.textContent = "";
 
   // 👉 Центрируем карту на объекте (чуть выше центра, чтобы не перекрывалось карточкой)
+// 👉 Центрируем: для zone — по POI с тем же id, иначе по геометрии
   try {
-    const geom = feature.geometry;
-    let latlng = null;
+    const props = feature.properties || {};
+    const id = props.id || "";
+    const t = props.type || "";
 
-    if (geom.type === "Point") {
-      latlng = geom.coordinates.slice().reverse(); // [y, x]
-    } else if (geom.type === "Polygon") {
-      const ring = geom.coordinates[0];
-      const mid = ring[Math.floor(ring.length / 2)];
-      latlng = mid.slice().reverse();
+    let targetLatLng = null;
+
+    // 1) ZONE -> по POI с таким же id
+    if (t === "zone" && id && poiCenterById[id]) {
+      targetLatLng = poiCenterById[id];
+    } else {
+      // 2) иначе — по своей геометрии
+      const geom = feature.geometry;
+
+      if (geom?.type === "Point") {
+        const [x, y] = geom.coordinates;
+        targetLatLng = [y, x];
+      } else if (geom?.type === "Polygon") {
+        const ring = geom.coordinates?.[0];
+        if (ring && ring.length) {
+          const mid = ring[Math.floor(ring.length / 2)];
+          const [x, y] = mid;
+          targetLatLng = [y, x];
+        }
+      }
     }
 
-    if (latlng) {
-      map.panTo(
-        [latlng[0] - IMAGE_HEIGHT * 0.15 / IMAGE_HEIGHT, latlng[1]],
-        { animate: true, duration: 0.4 }
-      );
+    if (targetLatLng) {
+      // сдвигаем чуть вверх, чтобы карточка не перекрывала
+      map.panTo([targetLatLng[0] - 80, targetLatLng[1]], { animate: true, duration: 0.4 });
     }
   } catch (e) {
     console.warn("center failed", e);
   }
+
+  if (elDim) elDim.classList.remove("hidden");
 
   elSheet.classList.remove("hidden");
 }
@@ -202,8 +219,9 @@ function openSheetByFeature(feature) {
 
 function closeSheet() {
   elSheet.classList.add("hidden");
-  elDim.classList.add("hidden");
+  if (elDim) elDim.classList.add("hidden");
 }
+
 
 
 function closeMiniAppOrSheet() {
@@ -266,10 +284,19 @@ async function init() {
   const tg = window.Telegram?.WebApp;
   if (tg) {
     tg.ready();
-    tg.expand(); // раскрыть на максимум по высоте
-    tg.BackButton.show();
-    tg.BackButton.onClick(closeMiniAppOrSheet);
+    tg.expand();
+
+    // BackButton бывает недоступен в некоторых версиях/контекстах
+    try {
+      if (tg.BackButton && typeof tg.BackButton.show === "function") {
+        tg.BackButton.show();
+        tg.BackButton.onClick(closeMiniAppOrSheet);
+      }
+    } catch (e) {
+      console.warn("BackButton not available:", e);
+    }
   }
+
 
   map = L.map("map", {
     crs: L.CRS.Simple,
@@ -316,7 +343,9 @@ async function init() {
   // Слои
   const geojsons = await Promise.all(GEOJSON_URLS.map(loadJSON));
 
-  // 1) общий bbox по всем слоям
+   
+  
+  // 1) общий bbox по всем слоям (в исходных координатах QGIS)
   let global = { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity };
   geojsons.forEach(gj => {
     const b = getGeoJSONBounds(gj);
@@ -326,9 +355,45 @@ async function init() {
     global.maxY = Math.max(global.maxY, b.maxY);
   });
 
+  // ⬇️ Свайп вниз по карточке — закрытие
+  let startY = null;
+
+  elSheet.addEventListener("touchstart", e => {
+    startY = e.touches[0].clientY;
+  });
+
+  elSheet.addEventListener("touchmove", e => {
+    if (startY === null) return;
+    const dy = e.touches[0].clientY - startY;
+
+    if (dy > 80) {
+      closeSheet();
+      startY = null;
+    }
+  });
+
+  elSheet.addEventListener("touchend", () => {
+    startY = null;
+  });
+
+
   // 2) трансформируем каждый слой по одному bbox
   geojsons.forEach(gj => {
     const fixed = transformGeoJSON(gj, global);
+
+  const layerName = (fixed?.name || "").toLowerCase();
+  if (layerName.includes("poi")) {
+    (fixed.features || []).forEach(f => {
+      const id = f?.properties?.id;
+      if (!id) return;
+      if (f?.geometry?.type === "Point") {
+        const [x, y] = f.geometry.coordinates;
+        poiCenterById[id] = [y, x];
+      }
+    });
+  }
+
+
 
     L.geoJSON(fixed, {
       style: styleFeature,
@@ -353,23 +418,4 @@ init().catch(err => {
   alert("Ошибка загрузки, смотри консоль (F12).");
 });
 
-// ⬇️ Свайп вниз по карточке — закрытие
-let startY = null;
 
-elSheet.addEventListener("touchstart", e => {
-  startY = e.touches[0].clientY;
-});
-
-elSheet.addEventListener("touchmove", e => {
-  if (startY === null) return;
-  const dy = e.touches[0].clientY - startY;
-
-  if (dy > 80) { // порог
-    closeSheet();
-    startY = null;
-  }
-});
-
-elSheet.addEventListener("touchend", () => {
-  startY = null;
-});
