@@ -215,7 +215,9 @@ function openSheetByFeature(feature) {
   const metaParts = [];
 
   if (meta.capacity) metaParts.push(`👤 ${meta.capacity}`);
+  if (meta.parking) metaParts.push(`🚗 ${meta.parking} мест`);
   if (meta.beds) metaParts.push(`🛏 ${meta.beds}`);
+  if (meta.price) metaParts.push(`💰 ${meta.price}`);
   if (meta.hours) metaParts.push(`🕒 ${meta.hours}`);
 
   // покажем максимум 3 пункта в одну строку
