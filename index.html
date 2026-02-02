@@ -9,7 +9,8 @@
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
   />
-  <link rel="stylesheet" href="styles.css?v=20260122-1" />
+  <link rel="stylesheet" href="styles.css?v=20260203-2" />
+
 </head>
 <body>
   <div id="map"></div>
@@ -52,7 +53,7 @@
     <div class="sheet__content">
       <!-- ✅ Фото (появится только если есть item.photo в catalog.json) -->
       <img id="sheetPhoto" class="sheet__photo hidden" alt="" />
-      <div id="sheetNoPhoto" style="display:none; padding:12px 14px; border-radius:14px; background: rgba(255,255,255,.08);">
+      <div id="sheetNoPhoto" class="sheet__no-photo hidden">
       Фото скоро появится
       </div>
 
@@ -60,14 +61,15 @@
       <div id="sheetSubtitle" class="sheet__subtitle"></div>
 
       <!-- ✅ Чипсы (chips[] из catalog.json) -->
-      <div id="sheetChips" class="sheet__chips"></div>
-
       <div id="sheetDesc" class="sheet__desc">
-        Описание…
+      Описание…
       </div>
 
+      <div id="sheetChips" class="sheet__chips"></div>
+
       <!-- ✅ Кнопки действий -->
-      <div class="sheet__actions">
+      <div class="sheet__actions hidden">
+
         <a id="sheetBtnDetails" class="sheet__btn hidden" href="#" target="_blank" rel="noopener">
           Подробнее
         </a>
