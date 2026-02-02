@@ -12,9 +12,11 @@ const GEOJSON_URLS = [
 
 const CATALOG_URL = "./data/catalog.json";
 let poiCenterById = {}; // id -> [lat, lng] (в CRS.Simple это [y, x])
-
 let map;
 let catalogById = {};
+let HOME_CENTER = null; // [lat, lng] в CRS.Simple
+let HOME_ZOOM = null;
+
 
 // Sheet elements
 const elSheet = document.getElementById("sheet");
@@ -25,6 +27,7 @@ const elDesc = document.getElementById("sheetDesc");
 const elLink = document.getElementById("sheetLink");
 const elMeta = document.getElementById("sheetMeta");
 const elPhoto = document.getElementById("sheetPhoto");
+const elNoPhoto = document.getElementById("sheetNoPhoto");
 const elChips = document.getElementById("sheetChips");
 const elBtnDetails = document.getElementById("sheetBtnDetails");
 const elBtnCall = document.getElementById("sheetBtnCall");
@@ -129,18 +132,51 @@ function openSheetByFeature(feature) {
   // Описание
   elDesc.textContent = item?.desc || "Описание появится здесь (catalog.json).";
 
-  // Фото
-  const photo = item?.photo || "";
+
+  // Фото (fallback, если не загрузилось)
+  const photo = (item?.photo || "").trim();
+
   if (elPhoto) {
+    elPhoto.alt = item?.title || label;
+
     if (photo) {
-      elPhoto.src = photo;
-      elPhoto.alt = item?.title || label;
+      // сбрасываем обработчики
+      elPhoto.onload = null;
+      elPhoto.onerror = null;
+
+      elPhoto.onerror = () => {
+        elPhoto.classList.add("hidden");
+        elPhoto.removeAttribute("src");
+
+        if (elNoPhoto) {
+          elNoPhoto.textContent = "Фото скоро появится";
+          elNoPhoto.classList.remove("hidden");
+        }
+      };
+
+      elPhoto.onload = () => {
+        if (elNoPhoto) elNoPhoto.classList.add("hidden");
+        elPhoto.classList.remove("hidden");
+      };
+
+      // сначала показываем фото, заглушку прячем
+      if (elNoPhoto) elNoPhoto.classList.add("hidden");
       elPhoto.classList.remove("hidden");
+
+      elPhoto.src = photo;
     } else {
+      // нет фото в каталоге
       elPhoto.classList.add("hidden");
       elPhoto.removeAttribute("src");
+
+      if (elNoPhoto) {
+        elNoPhoto.textContent = "Фото скоро появится";
+        elNoPhoto.classList.remove("hidden");
+      }
     }
   }
+
+
 
 
   // Chips
@@ -164,7 +200,7 @@ function openSheetByFeature(feature) {
   }
 
   // Кнопка "Позвонить"
-  const phone = item?.actions?.phone || "";
+  const phone = (item?.actions?.phone || "").trim();
   if (phone) {
     elBtnCall.href = `tel:${phone.replace(/\s+/g, "")}`;
     elBtnCall.classList.remove("hidden");
@@ -175,10 +211,21 @@ function openSheetByFeature(feature) {
   }
 
   // Убираем тех.мету полностью
-  elMeta.textContent = "";
+  const meta = (item && item.meta && typeof item.meta === "object") ? item.meta : {};
+  const metaParts = [];
 
-  // 👉 Центрируем карту на объекте (чуть выше центра, чтобы не перекрывалось карточкой)
-// 👉 Центрируем: для zone — по POI с тем же id, иначе по геометрии
+  if (meta.capacity) metaParts.push(`👤 ${meta.capacity}`);
+  if (meta.beds) metaParts.push(`🛏 ${meta.beds}`);
+  if (meta.hours) metaParts.push(`🕒 ${meta.hours}`);
+
+  // покажем максимум 3 пункта в одну строку
+  const metaLine = metaParts.slice(0, 3).join("  •  ");
+  elMeta.textContent = metaLine;
+  elMeta.style.display = metaLine ? "block" : "none";
+
+
+
+  // 👉 Центрируем: для zone — по POI с тем же id, иначе по геометрии
   try {
     const props = feature.properties || {};
     const id = props.id || "";
@@ -217,15 +264,20 @@ function openSheetByFeature(feature) {
   if (elDim) elDim.classList.remove("hidden");
 
   elSheet.classList.remove("hidden");
-}
+  // прячем кнопку "Общий вид", чтобы не мешала
+  const btnHome = document.getElementById("btnHome");
+  if (btnHome) btnHome.style.display = "none";
 
+}
 
 function closeSheet() {
   elSheet.classList.add("hidden");
   if (elDim) elDim.classList.add("hidden");
+
+  // возвращаем кнопку "Общий вид"
+  const btnHome = document.getElementById("btnHome");
+  if (btnHome) btnHome.style.display = "block";
 }
-
-
 
 function closeMiniAppOrSheet() {
   // 1) если карточка открыта — закрываем её
@@ -283,166 +335,216 @@ function pointToLayer(feature, latlng) {
 }
 
 async function init() {
-  // Telegram WebApp (если открыто внутри Telegram Mini App)
-  const tg = window.Telegram?.WebApp;
-  if (tg) {
-    tg.ready();
-    tg.expand();
-
-    // BackButton бывает недоступен в некоторых версиях/контекстах
-    try {
-      if (tg.BackButton && typeof tg.BackButton.show === "function") {
-        tg.BackButton.show();
-        tg.BackButton.onClick(closeMiniAppOrSheet);
-      }
-    } catch (e) {
-      console.warn("BackButton not available:", e);
-    }
-  }
-
-
-  map = L.map("map", {
-    crs: L.CRS.Simple,
-    zoomControl: true,
-    minZoom: -3,
-    maxZoom: 3
-  });
-
-  const imageBounds = [[0, 0], [IMAGE_HEIGHT, IMAGE_WIDTH]];
-  L.imageOverlay("./assets/base.png", imageBounds).addTo(map);
-  map.fitBounds(imageBounds);
-
-  let suppressNextMapClick = false;
-
-
-  map.on("click", () => {
-    if (suppressNextMapClick) {
-      suppressNextMapClick = false;
-      return;
-    }
-    if (!elSheet.classList.contains("hidden")) {
-     closeSheet();
-    }
-  });
-
-
-
-  elSheetClose.addEventListener("click", closeMiniAppOrSheet);
-
-  // клик по затемнению — закрываем карточку
-  if (elDim) {
-    elDim.addEventListener("click", closeSheet);
-  }
-
-
-  // Каталог (универсально: поддерживает и объект-словарь, и массив)
   try {
-    const catalog = await loadJSON(CATALOG_URL);
+    // Telegram WebApp (если открыто внутри Telegram Mini App)
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+      tg.ready();
+      tg.expand();
 
-    if (Array.isArray(catalog)) {
-      // формат: [{ id, title, photo, ... }, ...]
-      catalogById = {};
-      catalog.forEach(it => {
-        if (it?.id) catalogById[it.id] = it;
-      });
-    } else if (catalog && typeof catalog === "object") {
-      // формат: { "cabin-01": {...}, "admin": {...} }
-      // или формат: { items: [...] }
-      if (Array.isArray(catalog.items)) {
-        catalogById = {};
-        catalog.items.forEach(it => {
-          if (it?.id) catalogById[it.id] = it;
-        });
-      } else {
-        catalogById = catalog;
+      // BackButton бывает недоступен в некоторых версиях/контекстах
+      try {
+        if (tg.BackButton && typeof tg.BackButton.show === "function") {
+          tg.BackButton.show();
+          tg.BackButton.onClick(closeMiniAppOrSheet);
+        }
+      } catch (e) {
+        console.warn("BackButton not available:", e);
       }
-    } else {
-      catalogById = {};
     }
 
-    console.log("CATALOG loaded keys:", Object.keys(catalogById).slice(0, 10));
-  } catch (e) {
-    console.warn("catalog.json not loaded:", e);
-    catalogById = {};
-  }
+    const imageBounds = [[0, 0], [IMAGE_HEIGHT, IMAGE_WIDTH]];
 
+    map = L.map("map", {
+      crs: L.CRS.Simple,
+      zoomControl: true,
+      attributionControl: false,
+      preferCanvas: true,
+      inertia: true,
+      maxBounds: imageBounds,
+      maxBoundsViscosity: 1.0
+    });
 
-  // Слои
-  const geojsons = await Promise.all(GEOJSON_URLS.map(loadJSON));
+    L.imageOverlay("./assets/base.png", imageBounds).addTo(map);
 
-   
-  
-  // 1) общий bbox по всем слоям (в исходных координатах QGIS)
-  let global = { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity };
-  geojsons.forEach(gj => {
-    const b = getGeoJSONBounds(gj);
-    global.minX = Math.min(global.minX, b.minX);
-    global.minY = Math.min(global.minY, b.minY);
-    global.maxX = Math.max(global.maxX, b.maxX);
-    global.maxY = Math.max(global.maxY, b.maxY);
-  });
+    // 1) zoom, при котором картинка полностью помещается
+    const fitZoom = map.getBoundsZoom(imageBounds, true);
 
-  // ⬇️ Свайп вниз по карточке — закрытие
-  let startY = null;
+    // 2) стартовый зум (ты можешь менять эту строку сам)
+    const startZoom = fitZoom - 1;
 
-  elSheet.addEventListener("touchstart", e => {
-    startY = e.touches[0].clientY;
-  });
+    // 3) стартовая позиция
+    map.setView([IMAGE_HEIGHT / 2, IMAGE_WIDTH / 2], startZoom, { animate: false });
 
-  elSheet.addEventListener("touchmove", e => {
-    if (startY === null) return;
-    const dy = e.touches[0].clientY - startY;
+    // === HOME VIEW (кнопка "Общий вид") ===
+    HOME_CENTER = [IMAGE_HEIGHT / 2, IMAGE_WIDTH / 2];
+    HOME_ZOOM = startZoom;
 
-    if (dy > 80) {
-      closeSheet();
-      startY = null;
+    // создаём кнопку один раз
+    if (!document.getElementById("btnHome")) {
+      const btn = document.createElement("button");
+      btn.id = "btnHome";
+      btn.type = "button";
+      btn.textContent = "Общий вид";
+
+      // минимальные встроенные стили (чтобы не править CSS)
+      btn.style.position = "fixed";
+      btn.style.top = "12px";
+      btn.style.right = "12px";
+      btn.style.zIndex = "1100";
+      btn.style.padding = "10px 12px";
+      btn.style.borderRadius = "12px";
+      btn.style.border = "0";
+      btn.style.cursor = "pointer";
+      btn.style.fontWeight = "800";
+      btn.style.background = "rgba(22, 22, 22, 0.88)";
+      btn.style.color = "#fff";
+      btn.style.backdropFilter = "blur(8px)";
+      btn.style.boxShadow = "0 8px 18px rgba(0,0,0,0.25)";
+
+      btn.addEventListener("click", () => {
+        // если карточка открыта — закрываем, чтобы не мешала
+        if (!elSheet.classList.contains("hidden")) closeSheet();
+
+        // возвращаем на стартовый вид
+        map.setView(HOME_CENTER, HOME_ZOOM, { animate: true, duration: 0.35 });
+      });
+
+      document.body.appendChild(btn);
     }
-  });
 
-  elSheet.addEventListener("touchend", () => {
-    startY = null;
-  });
+    // 4) ограничения зума
+    map.setMinZoom(fitZoom - 1); // можно немного отдалить
+    map.setMaxZoom(fitZoom + 4); // можно приближать
 
+    let suppressNextMapClick = false;
 
-  // 2) трансформируем каждый слой по одному bbox
-  geojsons.forEach(gj => {
-    const fixed = transformGeoJSON(gj, global);
-
-  const layerName = (fixed?.name || "").toLowerCase();
-  if (layerName.includes("poi")) {
-    (fixed.features || []).forEach(f => {
-      const id = f?.properties?.id;
-      if (!id) return;
-      if (f?.geometry?.type === "Point") {
-        const [x, y] = f.geometry.coordinates;
-        poiCenterById[id] = [y, x];
+    map.on("click", () => {
+      if (suppressNextMapClick) {
+        suppressNextMapClick = false;
+        return;
+      }
+      if (!elSheet.classList.contains("hidden")) {
+        closeSheet();
       }
     });
-  }
 
+    elSheetClose.addEventListener("click", closeMiniAppOrSheet);
 
+    // клик по затемнению — закрываем карточку
+    if (elDim) {
+      elDim.addEventListener("click", closeSheet);
+    }
 
-    L.geoJSON(fixed, {
-      style: styleFeature,
-      pointToLayer,
-      onEachFeature: (feature, layer) => {
-        layer.on("click", (e) => {
-          suppressNextMapClick = true;
-          if (e?.originalEvent) {
-            e.originalEvent.stopPropagation?.();
-            e.originalEvent.preventDefault?.();
+    // Каталог (универсально: поддерживает и объект-словарь, и массив)
+    try {
+      const catalog = await loadJSON(CATALOG_URL);
+
+      if (Array.isArray(catalog)) {
+        catalogById = {};
+        catalog.forEach(it => {
+          if (it?.id) catalogById[it.id] = it;
+        });
+      } else if (catalog && typeof catalog === "object") {
+        if (Array.isArray(catalog.items)) {
+          catalogById = {};
+          catalog.items.forEach(it => {
+            if (it?.id) catalogById[it.id] = it;
+          });
+        } else {
+          catalogById = catalog;
+        }
+      } else {
+        catalogById = {};
+      }
+
+      console.log("CATALOG loaded keys:", Object.keys(catalogById).slice(0, 10));
+    } catch (e) {
+      console.warn("catalog.json not loaded:", e);
+      catalogById = {};
+    }
+
+    // Слои
+    const geojsons = await Promise.all(GEOJSON_URLS.map(loadJSON));
+
+    // 1) общий bbox по всем слоям (в исходных координатах QGIS)
+    let global = { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity };
+    geojsons.forEach(gj => {
+      const b = getGeoJSONBounds(gj);
+      global.minX = Math.min(global.minX, b.minX);
+      global.minY = Math.min(global.minY, b.minY);
+      global.maxX = Math.max(global.maxX, b.maxX);
+      global.maxY = Math.max(global.maxY, b.maxY);
+    });
+
+    // ⬇️ Свайп вниз по карточке — закрытие
+    let startY = null;
+
+    elSheet.addEventListener("touchstart", e => {
+      startY = e.touches[0].clientY;
+    });
+
+    elSheet.addEventListener("touchmove", e => {
+      if (startY === null) return;
+      const dy = e.touches[0].clientY - startY;
+
+      if (dy > 80) {
+        closeSheet();
+        startY = null;
+      }
+    });
+
+    elSheet.addEventListener("touchend", () => {
+      startY = null;
+    });
+
+    // 2) трансформируем каждый слой по одному bbox
+    geojsons.forEach(gj => {
+      const fixed = transformGeoJSON(gj, global);
+
+      const layerName = (fixed?.name || "").toLowerCase();
+      if (layerName.includes("poi")) {
+        (fixed.features || []).forEach(f => {
+          const id = f?.properties?.id;
+          if (!id) return;
+          if (f?.geometry?.type === "Point") {
+            const [x, y] = f.geometry.coordinates;
+            poiCenterById[id] = [y, x];
           }
-          openSheetByFeature(feature);
         });
       }
 
-    }).addTo(map);
-  });
-} // <-- ВОТ ЭТОЙ СКОБКИ НЕ ХВАТАЛО (закрываем init)
+      L.geoJSON(fixed, {
+        style: styleFeature,
+        pointToLayer,
+        onEachFeature: (feature, layer) => {
+          layer.on("click", (e) => {
+            suppressNextMapClick = true;
+            if (e?.originalEvent) {
+              e.originalEvent.stopPropagation?.();
+              e.originalEvent.preventDefault?.();
+            }
+            openSheetByFeature(feature);
+          });
+        }
+      }).addTo(map);
+    });
+
+  } finally {
+    // ✅ LOADER OFF (скрываем всегда — даже если была ошибка)
+    const elLoader = document.getElementById("loader");
+    if (elLoader) elLoader.style.display = "none";
+  }
+}
 
 init().catch(err => {
   console.error(err);
-  alert("Ошибка загрузки, смотри консоль (F12).");
+
+  // показываем понятную ошибку поверх карты
+  const elErr = document.getElementById("loadError");
+  if (elErr) elErr.style.display = "block";
+
+  alert("Ошибка загрузки. Открой F12 → Console и пришли первую красную строку ошибки.");
 });
 
 
