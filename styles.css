@@ -257,3 +257,69 @@ html, body {
 }
 
 #sheet .sheet__close { color: rgba(255,255,255,0.9) !important; }
+
+/* ───────────────── Card spacing fix (compact & readable) ───────────────── */
+
+/* Убираем дефолтные отступы у заголовков/параграфов внутри карточки */
+#sheet h1, #sheet h2, #sheet h3, #sheet p {
+  margin: 0;
+}
+
+/* Делаем контент карточки более плотным */
+#sheet .sheet__content,
+#sheet .sheet__body,
+#sheet .sheet__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;            /* ключевой параметр плотности */
+}
+
+/* Заголовок */
+#sheet .sheet__title {
+  line-height: 1.15;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+/* Подзаголовок */
+#sheet .sheet__subtitle {
+  line-height: 1.2;
+  font-size: 13px;
+  opacity: 0.78;
+  margin-top: -2px;    /* чуть подтягиваем ближе к title */
+}
+
+/* Описание */
+#sheet .sheet__desc,
+#sheet .sheet__text,
+#sheet .sheet__description {
+  line-height: 1.35;
+  font-size: 14px;
+  opacity: 0.95;
+}
+
+/* Чипсы плотнее */
+#sheet .sheet__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+/* Мета строка (иконки) */
+#sheet .sheet__meta {
+  font-size: 13px;
+  line-height: 1.2;
+  opacity: 0.9;
+  margin-top: 2px;
+}
+
+/* Фото: убираем лишнюю “дыру” снизу, если есть */
+#sheet .sheet__photo {
+  margin: 0;
+}
+
+/* Заглушка фото тоже без лишних отступов */
+#sheet #sheetNoPhoto {
+  margin: 0;
+}
