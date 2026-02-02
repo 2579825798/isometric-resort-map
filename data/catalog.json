@@ -11,10 +11,7 @@
       "price": "2000 ₽ / сутки",
       "hours": ""
     },
-    "actions": {
-      "details": "",
-      "phone": ""
-    }
+    "actions": { "details": "", "phone": "" }
   },
   "cabin-02": {
     "title": "Домик 2",
@@ -28,10 +25,7 @@
       "price": "2000 ₽ / сутки",
       "hours": ""
     },
-    "actions": {
-      "details": "",
-      "phone": ""
-    }
+    "actions": { "details": "", "phone": "" }
   },
   "cabin-03": {
     "title": "Домик 3",
@@ -45,10 +39,7 @@
       "price": "2000 ₽ / сутки",
       "hours": ""
     },
-    "actions": {
-      "details": "",
-      "phone": ""
-    }
+    "actions": { "details": "", "phone": "" }
   },
   "cabin-04": {
     "title": "Домик 4",
@@ -62,10 +53,7 @@
       "price": "3000 ₽ / сутки",
       "hours": ""
     },
-    "actions": {
-      "details": "",
-      "phone": ""
-    }
+    "actions": { "details": "", "phone": "" }
   },
   "cabin-05": {
     "title": "Домик 5",
@@ -79,10 +67,7 @@
       "price": "3000 ₽ / сутки",
       "hours": ""
     },
-    "actions": {
-      "details": "",
-      "phone": ""
-    }
+    "actions": { "details": "", "phone": "" }
   },
 
   "restaurant": {
@@ -92,15 +77,9 @@
     "photo": "./assets/photos/restaurant.jpg",
     "chips": ["Еда", "Завтраки", "У воды"],
     "meta": {
-      "capacity": "",
-      "beds": "",
-      "price": "",
       "hours": "09:00–21:00"
     },
-    "actions": {
-      "details": "",
-      "phone": ""
-    }
+    "actions": { "details": "", "phone": "" }
   },
 
   "bath": {
@@ -110,27 +89,19 @@
     "photo": "./assets/photos/bath.jpg",
     "chips": ["Баня", "На дровах", "По записи"],
     "meta": {
-      "capacity": "",
-      "beds": "",
       "price": "500 ₽ / час",
       "hours": "10:00–22:00"
     },
-    "actions": {
-      "details": "",
-      "phone": ""
-    }
+    "actions": { "details": "", "phone": "" }
   },
 
   "admin": {
     "title": "Администрация",
     "subtitle": "Ресепшн",
-    "desc": "Заселение, выезд и любые вопросы по проживанию.",
+    "desc": "Заселение, выезд и любые вопросы по проживанию.\n\n*Демо-версия: цены и параметры приведены для примера.*",
     "photo": "./assets/photos/admin.jpg",
     "chips": ["Заселение", "Вопросы", "Помощь"],
     "meta": {
-      "capacity": "",
-      "beds": "",
-      "price": "",
       "hours": "09:00–22:00"
     },
     "actions": {
@@ -144,14 +115,11 @@
     "subtitle": "Для гостей базы",
     "desc": "Парковка рядом со входом на территорию.",
     "photo": "./assets/photos/zone-parking.jpg",
-    "chips": ["Въезд", "Ориентир", "Для гостей"],
+    "chips": ["Въезд", "Для гостей", "Удобно"],
     "meta": {
       "parking": 20
     },
-    "actions": {
-      "details": "",
-      "phone": ""
-    }
+    "actions": { "details": "", "phone": "" }
   },
 
   "zone-beach": {
@@ -159,50 +127,38 @@
     "subtitle": "Купание и отдых",
     "desc": "Зона отдыха у воды. Удобно для купания и загара.",
     "photo": "./assets/photos/zone-beach.jpg",
-    "chips": ["Купание", "Отдых", "У воды"],
+    "chips": ["Песок", "Купание", "Лежаки", "Кабинки", "Душ"],
     "meta": {},
-    "actions": {
-      "details": "",
-      "phone": ""
-    }
+    "actions": { "details": "", "phone": "" }
   },
 
   "zone-river": {
     "title": "Река",
     "subtitle": "Прогулки и вода",
-    "desc": "Река вдоль базы: купание, рыбалка, красивые виды.",
+    "desc": "Река вдоль базы: купание, рыбалка и активный отдых.",
     "photo": "./assets/photos/zone-river.jpg",
-    "chips": ["Купание", "Рыбалка", "Виды"],
+    "chips": ["Тёплая вода", "Купание", "Рыбалка", "Течение", "САПы"],
     "meta": {},
-    "actions": {
-      "details": "",
-      "phone": ""
-    }
+    "actions": { "details": "", "phone": "" }
   },
 
   "zone-lake": {
     "title": "Озеро",
     "subtitle": "Тихая зона",
-    "desc": "Небольшое озеро на территории: прогулки и спокойный отдых.",
+    "desc": "Небольшое озеро на территории для спокойного отдыха.",
     "photo": "./assets/photos/zone-lake.jpg",
-    "chips": ["Озеро", "Прогулки", "Тишина"],
+    "chips": ["Тёплая вода", "Купание", "Рыбалка", "Прогулки"],
     "meta": {},
-    "actions": {
-      "details": "",
-      "phone": ""
-    }
+    "actions": { "details": "", "phone": "" }
   },
 
   "zone-forest": {
     "title": "Лес",
     "subtitle": "Прогулочная зона",
-    "desc": "Тихая зона для прогулок, утреннего кофе и отдыха в тени.",
+    "desc": "Лесная зона для прогулок, отдыха и контакта с природой.",
     "photo": "./assets/photos/zone-forest.jpg",
-    "chips": ["Прогулки", "Свежий воздух", "Тень"],
+    "chips": ["Свежий воздух", "Эко-тропа", "Животные", "Грибы"],
     "meta": {},
-    "actions": {
-      "details": "",
-      "phone": ""
-    }
+    "actions": { "details": "", "phone": "" }
   }
 }
