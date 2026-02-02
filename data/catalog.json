@@ -3,86 +3,216 @@
     "title": "Домик 1",
     "subtitle": "Гостевой дом",
     "desc": "Уютный домик для спокойного отдыха на природе.",
-    "photo": "./assets/photos/cabin-01.jpg"
+    "photo": "./assets/photos/cabin-01.jpg",
+    "chips": ["Проживание", "Тихо", "Уютно"],
+    "meta": {
+      "capacity": "",
+      "beds": "",
+      "hours": ""
+    },
+    "actions": {
+      "details": "",
+      "phone": ""
+    }
   },
   "cabin-02": {
     "title": "Домик 2",
     "subtitle": "Гостевой дом",
     "desc": "Домик с удобным расположением недалеко от воды.",
-    "photo": "./assets/photos/cabin-02.jpg"
+    "photo": "./assets/photos/cabin-02.jpg",
+    "chips": ["Проживание", "У воды", "Отдых"],
+    "meta": {
+      "capacity": "",
+      "beds": "",
+      "hours": ""
+    },
+    "actions": {
+      "details": "",
+      "phone": ""
+    }
   },
   "cabin-03": {
     "title": "Домик 3",
     "subtitle": "Гостевой дом",
     "desc": "Домик с видом на воду.",
-    "photo": "./assets/photos/cabin-03.jpg"
+    "photo": "./assets/photos/cabin-03.jpg",
+    "chips": ["Проживание", "Вид на воду", "Тихо"],
+    "meta": {
+      "capacity": "",
+      "beds": "",
+      "hours": ""
+    },
+    "actions": {
+      "details": "",
+      "phone": ""
+    }
   },
   "cabin-04": {
     "title": "Домик 4",
     "subtitle": "Гостевой дом",
     "desc": "Просторный домик для семьи или компании.",
-    "photo": "./assets/photos/cabin-04.jpg"
+    "photo": "./assets/photos/cabin-04.jpg",
+    "chips": ["Проживание", "Для семьи", "Для компании"],
+    "meta": {
+      "capacity": "",
+      "beds": "",
+      "hours": ""
+    },
+    "actions": {
+      "details": "",
+      "phone": ""
+    }
   },
   "cabin-05": {
     "title": "Домик 5",
     "subtitle": "Гостевой дом",
     "desc": "Домик в тихой части базы, рядом с лесом.",
-    "photo": "./assets/photos/cabin-05.jpg"
+    "photo": "./assets/photos/cabin-05.jpg",
+    "chips": ["Проживание", "Рядом лес", "Тихая зона"],
+    "meta": {
+      "capacity": "",
+      "beds": "",
+      "hours": ""
+    },
+    "actions": {
+      "details": "",
+      "phone": ""
+    }
   },
 
   "restaurant": {
     "title": "Ресторан",
     "subtitle": "Кафе у воды",
     "desc": "Завтраки, обеды и ужины с видом на реку.",
-    "photo": "./assets/photos/restaurant.jpg"
+    "photo": "./assets/photos/restaurant.jpg",
+    "chips": ["Еда", "Завтраки", "У воды"],
+    "meta": {
+      "capacity": "",
+      "beds": "",
+      "hours": "09:00–21:00"
+    },
+    "actions": {
+      "details": "",
+      "phone": ""
+    }
   },
 
   "bath": {
     "title": "Баня",
     "subtitle": "Русская баня на дровах",
     "desc": "Горячая баня для отдыха после прогулок и купания.",
-    "photo": "./assets/photos/bath.jpg"
+    "photo": "./assets/photos/bath.jpg",
+    "chips": ["Баня", "На дровах", "По записи"],
+    "meta": {
+      "capacity": "",
+      "beds": "",
+      "hours": "10:00–22:00"
+    },
+    "actions": {
+      "details": "",
+      "phone": ""
+    }
   },
 
   "admin": {
     "title": "Администрация",
     "subtitle": "Ресепшн",
     "desc": "Заселение, выезд и любые вопросы по проживанию.",
-    "photo": "./assets/photos/admin.jpg"
+    "photo": "./assets/photos/admin.jpg",
+    "chips": ["Заселение", "Вопросы", "Помощь"],
+    "meta": {
+      "capacity": "",
+      "beds": "",
+      "hours": "09:00–22:00"
+    },
+    "actions": {
+      "details": "",
+      "phone": "+79133986078"
+    }
   },
 
   "zone-parking": {
     "title": "Парковка",
     "subtitle": "Для гостей базы",
     "desc": "Удобная парковка рядом со входом.",
-    "photo": "./assets/photos/zone-parking.jpg"
+    "photo": "./assets/photos/zone-parking.jpg",
+    "chips": ["Въезд", "Парковка", "Ориентир"],
+    "meta": {
+      "capacity": "",
+      "beds": "",
+      "hours": ""
+    },
+    "actions": {
+      "details": "",
+      "phone": ""
+    }
   },
 
   "zone-beach": {
     "title": "Пляж",
     "subtitle": "Купание и отдых",
     "desc": "Песчаный пляж с удобным заходом в воду.",
-    "photo": "./assets/photos/zone-beach.jpg"
+    "photo": "./assets/photos/zone-beach.jpg",
+    "chips": ["Купание", "Песок", "Отдых"],
+    "meta": {
+      "capacity": "",
+      "beds": "",
+      "hours": ""
+    },
+    "actions": {
+      "details": "",
+      "phone": ""
+    }
   },
 
   "zone-river": {
     "title": "Река",
     "subtitle": "Купание и лодки",
     "desc": "Чистая река, причал и лодки для гостей.",
-    "photo": "./assets/photos/zone-river.jpg"
+    "photo": "./assets/photos/zone-river.jpg",
+    "chips": ["Река", "Купание", "Прогулки"],
+    "meta": {
+      "capacity": "",
+      "beds": "",
+      "hours": ""
+    },
+    "actions": {
+      "details": "",
+      "phone": ""
+    }
   },
 
   "zone-lake": {
     "title": "Озеро",
     "subtitle": "Прогулки и рыбалка",
     "desc": "Небольшое озеро в центре базы.",
-    "photo": "./assets/photos/zone-lake.jpg"
+    "photo": "./assets/photos/zone-lake.jpg",
+    "chips": ["Озеро", "Прогулки", "Рыбалка"],
+    "meta": {
+      "capacity": "",
+      "beds": "",
+      "hours": ""
+    },
+    "actions": {
+      "details": "",
+      "phone": ""
+    }
   },
 
   "zone-forest": {
     "title": "Лес",
     "subtitle": "Природа вокруг",
     "desc": "Прогулки по лесу и свежий воздух.",
-    "photo": "./assets/photos/zone-forest.jpg"
+    "photo": "./assets/photos/zone-forest.jpg",
+    "chips": ["Лес", "Маршруты", "Свежий воздух"],
+    "meta": {
+      "capacity": "",
+      "beds": "",
+      "hours": ""
+    },
+    "actions": {
+      "details": "",
+      "phone": ""
+    }
   }
 }
