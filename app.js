@@ -24,7 +24,6 @@ const elSheetClose = document.getElementById("sheetClose");
 const elTitle = document.getElementById("sheetTitle");
 const elSubtitle = document.getElementById("sheetSubtitle");
 const elDesc = document.getElementById("sheetDesc");
-const elLink = document.getElementById("sheetLink");
 const elMeta = document.getElementById("sheetMeta");
 const elPhoto = document.getElementById("sheetPhoto");
 const elNoPhoto = document.getElementById("sheetNoPhoto");
@@ -128,6 +127,7 @@ function openSheetByFeature(feature) {
 
   // Subtitle (если есть) — иначе пусто
   elSubtitle.textContent = item?.subtitle || "";
+  elSubtitle.classList.toggle("hidden", !elSubtitle.textContent.trim());
 
   // Описание
   elDesc.textContent = item?.desc || "Описание появится здесь (catalog.json).";
@@ -176,18 +176,28 @@ function openSheetByFeature(feature) {
     }
   }
 
-
-
-
   // Chips
   elChips.innerHTML = "";
-  const chips = Array.isArray(item?.chips) ? item.chips : [];
-  chips.slice(0, 6).forEach(text => {
-    const div = document.createElement("div");
-    div.className = "chip";
-    div.textContent = text;
-    elChips.appendChild(div);
-  });
+  const chips = Array.isArray(item?.chips)
+    ? item.chips
+    : Array.isArray(item?.tags)
+      ? item.tags
+      : [];
+
+  if (chips.length > 0) {
+    chips.slice(0, 6).forEach(text => {
+      const div = document.createElement("div");
+      div.className = "chip";
+      div.textContent = text;
+      elChips.appendChild(div);
+    });
+
+    // ЯВНО показываем контейнер
+    elChips.classList.remove("hidden");
+  } else {
+    // ЯВНО скрываем контейнер
+    elChips.classList.add("hidden");
+  }
 
   // Кнопка "Подробнее"
   const details = item?.actions?.details || item?.url || "";
@@ -223,21 +233,19 @@ function openSheetByFeature(feature) {
   // покажем максимум 3 пункта в одну строку
   const metaLine = metaParts.slice(0, 3).join("  •  ");
   elMeta.textContent = metaLine;
-  elMeta.style.display = metaLine ? "block" : "none";
-
-
+  elMeta.classList.toggle("hidden", !metaLine);
 
   // 👉 Центрируем: для zone — по POI с тем же id, иначе по геометрии
   try {
-    const props = feature.properties || {};
-    const id = props.id || "";
-    const t = props.type || "";
+    const props2 = feature.properties || {};
+    const id2 = props2.id || "";
+    const t2 = props2.type || "";
 
     let targetLatLng = null;
 
     // 1) ZONE -> по POI с таким же id
-    if (t === "zone" && id && poiCenterById[id]) {
-      targetLatLng = poiCenterById[id];
+    if (t2 === "zone" && id2 && poiCenterById[id2]) {
+      targetLatLng = poiCenterById[id2];
     } else {
       // 2) иначе — по своей геометрии
       const geom = feature.geometry;
@@ -248,9 +256,16 @@ function openSheetByFeature(feature) {
       } else if (geom?.type === "Polygon") {
         const ring = geom.coordinates?.[0];
         if (ring && ring.length) {
-          const mid = ring[Math.floor(ring.length / 2)];
-          const [x, y] = mid;
-          targetLatLng = [y, x];
+          let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+          ring.forEach(([x, y]) => {
+            minX = Math.min(minX, x);
+            minY = Math.min(minY, y);
+            maxX = Math.max(maxX, x);
+            maxY = Math.max(maxY, y);
+          });
+          const cx = (minX + maxX) / 2;
+          const cy = (minY + maxY) / 2;
+          targetLatLng = [cy, cx];
         }
       }
     }
@@ -262,6 +277,7 @@ function openSheetByFeature(feature) {
   } catch (e) {
     console.warn("center failed", e);
   }
+
 
   if (elDim) elDim.classList.remove("hidden");
 
@@ -524,7 +540,6 @@ async function init() {
             suppressNextMapClick = true;
             if (e?.originalEvent) {
               e.originalEvent.stopPropagation?.();
-              e.originalEvent.preventDefault?.();
             }
             openSheetByFeature(feature);
           });
