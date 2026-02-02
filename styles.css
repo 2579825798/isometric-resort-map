@@ -20,8 +20,7 @@ html, body {
 
 /* helper */
 .hidden {
-  visibility: hidden;
-  pointer-events: none;
+  display: none !important;
 }
 
 /* ===============================
@@ -258,68 +257,86 @@ html, body {
 
 #sheet .sheet__close { color: rgba(255,255,255,0.9) !important; }
 
-/* ───────────────── Card spacing fix (compact & readable) ───────────────── */
+/* ───────────── FORCE CHIPS VISIBILITY ───────────── */
 
-/* Убираем дефолтные отступы у заголовков/параграфов внутри карточки */
-#sheet h1, #sheet h2, #sheet h3, #sheet p {
-  margin: 0;
+#sheet .sheet__chips {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 4px 0 0;
 }
 
-/* Делаем контент карточки более плотным */
+#sheet .chip {
+  display: inline-flex !important;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  background: rgba(245, 245, 245, 0.95);
+  color: #111;
+  white-space: nowrap;
+}
+
+
+/* ───────────── COMPACT CARD LAYOUT ───────────── */
+
 #sheet .sheet__content,
 #sheet .sheet__body,
 #sheet .sheet__inner {
   display: flex;
   flex-direction: column;
-  gap: 8px;            /* ключевой параметр плотности */
+  gap: 6px; /* ключевой параметр плотности */
 }
 
-/* Заголовок */
+#sheet h1,
+#sheet h2,
+#sheet h3,
+#sheet p {
+  margin: 0;
+}
+
 #sheet .sheet__title {
-  line-height: 1.15;
   font-size: 18px;
   font-weight: 800;
+  line-height: 1.15;
 }
 
-/* Подзаголовок */
 #sheet .sheet__subtitle {
-  line-height: 1.2;
   font-size: 13px;
-  opacity: 0.78;
-  margin-top: -2px;    /* чуть подтягиваем ближе к title */
+  opacity: 0.75;
+  margin-top: -2px;
 }
 
-/* Описание */
-#sheet .sheet__desc,
-#sheet .sheet__text,
-#sheet .sheet__description {
-  line-height: 1.35;
+#sheet .sheet__desc {
   font-size: 14px;
+  line-height: 1.35;
   opacity: 0.95;
 }
 
-/* Чипсы плотнее */
-#sheet .sheet__chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 2px;
-}
-
-/* Мета строка (иконки) */
 #sheet .sheet__meta {
   font-size: 13px;
   line-height: 1.2;
-  opacity: 0.9;
   margin-top: 2px;
 }
 
-/* Фото: убираем лишнюю “дыру” снизу, если есть */
-#sheet .sheet__photo {
-  margin: 0;
-}
+/* ───────────── FINAL COMPACT OVERRIDES ───────────── */
+#sheet .sheet__content { padding: 10px 12px 12px !important; }
 
-/* Заглушка фото тоже без лишних отступов */
-#sheet #sheetNoPhoto {
-  margin: 0;
+#sheet .sheet__photo { height: 140px !important; margin-bottom: 0 !important; }
+#sheet .sheet__title { margin: 0 !important; }
+#sheet .sheet__subtitle { margin: 0 !important; }
+#sheet .sheet__desc { margin: 0 !important; }
+#sheet .sheet__meta { margin-top: 0 !important; }
+
+/* ───────────── ORDER FIX (text before chips) ───────────── */
+#sheet .sheet__desc { order: 2; }
+#sheet .sheet__chips { order: 3; }
+#sheet .sheet__meta { order: 4; }
+
+/* === FINAL CHIP COLOR OVERRIDE === */
+#sheet #sheetChips .chip {
+  background-color: rgba(245, 245, 245, 0.95) !important;
+  color: #111 !important;
 }
