@@ -6,8 +6,9 @@
     "photo": "./assets/photos/cabin-01.jpg",
     "chips": ["Проживание", "Тихо", "Уютно"],
     "meta": {
-      "capacity": "",
-      "beds": "",
+      "capacity": 4,
+      "beds": "2+2",
+      "price": "2000 ₽ / сутки",
       "hours": ""
     },
     "actions": {
@@ -22,8 +23,9 @@
     "photo": "./assets/photos/cabin-02.jpg",
     "chips": ["Проживание", "У воды", "Отдых"],
     "meta": {
-      "capacity": "",
-      "beds": "",
+      "capacity": 4,
+      "beds": "2+2",
+      "price": "2000 ₽ / сутки",
       "hours": ""
     },
     "actions": {
@@ -38,8 +40,9 @@
     "photo": "./assets/photos/cabin-03.jpg",
     "chips": ["Проживание", "Вид на воду", "Тихо"],
     "meta": {
-      "capacity": "",
-      "beds": "",
+      "capacity": 4,
+      "beds": "2+2",
+      "price": "2000 ₽ / сутки",
       "hours": ""
     },
     "actions": {
@@ -54,8 +57,9 @@
     "photo": "./assets/photos/cabin-04.jpg",
     "chips": ["Проживание", "Для семьи", "Для компании"],
     "meta": {
-      "capacity": "",
-      "beds": "",
+      "capacity": 6,
+      "beds": "2+2+2",
+      "price": "3000 ₽ / сутки",
       "hours": ""
     },
     "actions": {
@@ -70,8 +74,9 @@
     "photo": "./assets/photos/cabin-05.jpg",
     "chips": ["Проживание", "Рядом лес", "Тихая зона"],
     "meta": {
-      "capacity": "",
-      "beds": "",
+      "capacity": 6,
+      "beds": "2+2+2",
+      "price": "3000 ₽ / сутки",
       "hours": ""
     },
     "actions": {
@@ -89,6 +94,7 @@
     "meta": {
       "capacity": "",
       "beds": "",
+      "price": "",
       "hours": "09:00–21:00"
     },
     "actions": {
@@ -106,6 +112,7 @@
     "meta": {
       "capacity": "",
       "beds": "",
+      "price": "500 ₽ / час",
       "hours": "10:00–22:00"
     },
     "actions": {
@@ -123,6 +130,7 @@
     "meta": {
       "capacity": "",
       "beds": "",
+      "price": "",
       "hours": "09:00–22:00"
     },
     "actions": {
@@ -134,13 +142,11 @@
   "zone-parking": {
     "title": "Парковка",
     "subtitle": "Для гостей базы",
-    "desc": "Удобная парковка рядом со входом.",
+    "desc": "Парковка рядом со входом на территорию.",
     "photo": "./assets/photos/zone-parking.jpg",
-    "chips": ["Въезд", "Парковка", "Ориентир"],
+    "chips": ["Въезд", "Ориентир", "Для гостей"],
     "meta": {
-      "capacity": "",
-      "beds": "",
-      "hours": ""
+      "parking": 20
     },
     "actions": {
       "details": "",
@@ -151,14 +157,10 @@
   "zone-beach": {
     "title": "Пляж",
     "subtitle": "Купание и отдых",
-    "desc": "Песчаный пляж с удобным заходом в воду.",
+    "desc": "Зона отдыха у воды. Удобно для купания и загара.",
     "photo": "./assets/photos/zone-beach.jpg",
-    "chips": ["Купание", "Песок", "Отдых"],
-    "meta": {
-      "capacity": "",
-      "beds": "",
-      "hours": ""
-    },
+    "chips": ["Купание", "Отдых", "У воды"],
+    "meta": {},
     "actions": {
       "details": "",
       "phone": ""
@@ -167,15 +169,11 @@
 
   "zone-river": {
     "title": "Река",
-    "subtitle": "Купание и лодки",
-    "desc": "Чистая река, причал и лодки для гостей.",
+    "subtitle": "Прогулки и вода",
+    "desc": "Река вдоль базы: купание, рыбалка, красивые виды.",
     "photo": "./assets/photos/zone-river.jpg",
-    "chips": ["Река", "Купание", "Прогулки"],
-    "meta": {
-      "capacity": "",
-      "beds": "",
-      "hours": ""
-    },
+    "chips": ["Купание", "Рыбалка", "Виды"],
+    "meta": {},
     "actions": {
       "details": "",
       "phone": ""
@@ -184,15 +182,11 @@
 
   "zone-lake": {
     "title": "Озеро",
-    "subtitle": "Прогулки и рыбалка",
-    "desc": "Небольшое озеро в центре базы.",
+    "subtitle": "Тихая зона",
+    "desc": "Небольшое озеро на территории: прогулки и спокойный отдых.",
     "photo": "./assets/photos/zone-lake.jpg",
-    "chips": ["Озеро", "Прогулки", "Рыбалка"],
-    "meta": {
-      "capacity": "",
-      "beds": "",
-      "hours": ""
-    },
+    "chips": ["Озеро", "Прогулки", "Тишина"],
+    "meta": {},
     "actions": {
       "details": "",
       "phone": ""
@@ -201,15 +195,11 @@
 
   "zone-forest": {
     "title": "Лес",
-    "subtitle": "Природа вокруг",
-    "desc": "Прогулки по лесу и свежий воздух.",
+    "subtitle": "Прогулочная зона",
+    "desc": "Тихая зона для прогулок, утреннего кофе и отдыха в тени.",
     "photo": "./assets/photos/zone-forest.jpg",
-    "chips": ["Лес", "Маршруты", "Свежий воздух"],
-    "meta": {
-      "capacity": "",
-      "beds": "",
-      "hours": ""
-    },
+    "chips": ["Прогулки", "Свежий воздух", "Тень"],
+    "meta": {},
     "actions": {
       "details": "",
       "phone": ""
