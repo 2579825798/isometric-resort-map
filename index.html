@@ -15,6 +15,35 @@
   <div id="map"></div>
   <div id="mapDim" class="map-dim hidden"></div>
 
+  <div id="loader" style="
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+    color: #fff;
+    z-index: 1200;
+    font-weight: 700;
+    font-size: 16px;
+  ">
+  Загрузка схемы…
+  </div>
+
+  <div id="loadError" style="
+    display:none;
+    position: fixed;
+    inset: 0;
+    padding: 18px;
+    background: rgba(0,0,0,0.92);
+    color: #fff;
+    z-index: 1300;
+    font-weight: 700;
+  ">
+    Ошибка загрузки схемы. Проверь файлы в папке <b>data/</b> и пути к ним.
+  </div>
+
+
   <!-- Bottom sheet -->
   <div id="sheet" class="sheet hidden" role="dialog" aria-modal="true">
     <div class="sheet__handle"></div>
@@ -23,6 +52,9 @@
     <div class="sheet__content">
       <!-- ✅ Фото (появится только если есть item.photo в catalog.json) -->
       <img id="sheetPhoto" class="sheet__photo hidden" alt="" />
+      <div id="sheetNoPhoto" style="display:none; padding:12px 14px; border-radius:14px; background: rgba(255,255,255,.08);">
+      Фото скоро появится
+      </div>
 
       <div id="sheetTitle" class="sheet__title">Объект</div>
       <div id="sheetSubtitle" class="sheet__subtitle"></div>
